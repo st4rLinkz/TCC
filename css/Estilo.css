@@ -1,0 +1,279 @@
+* {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  list-style: none;
+}
+
+/* Estilos para dispositivos com largura de tela menor ou igual a 600 pixels */
+@media screen and (max-width: 600px) {
+  /* Estilos para telas menores */
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .item {
+    flex: 1 0 200px; /* Define a largura mínima e máxima do item */
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+}
+
+/* Estilos para dispositivos com largura de tela entre 601 e 1200 pixels */
+@media screen and (min-width: 601px) and (max-width: 1200px) {
+  /* Estilos para telas médias */
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .item {
+    flex: 1 0 200px; /* Define a largura mínima e máxima do item */
+  }
+  
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+}
+
+/* Estilos para dispositivos com largura de tela maior que 1200 pixels */
+@media screen and (min-width: 1201px) {
+  /* Estilos para telas maiores */
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .item {
+    flex: 1 0 200px; /* Define a largura mínima e máxima do item */
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+    
+}
+
+
+.brutaltypenav {
+  height: 75px;
+}
+
+.navdoIndex {
+  background-color: whitesmoke;
+}
+
+header {
+  background-color: black;
+  padding: 0.1px;
+  text-align: center;
+  color: whitesmoke;
+}
+
+/* FOOTER */
+.ajudaSup {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  width: 250px;
+  height: auto;
+  max-height: 200px;
+}
+
+.contato {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  align-items: center;
+}
+
+.vitrineProd {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  justify-content: space-between;
+  overflow: auto;
+  overflow-y: hidden;
+  width: 80%;
+}
+
+.col {
+  max-width: 50%;
+}
+
+.card-title {
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+.footer-contain a {
+  text-decoration: none;
+  text-transform: uppercase;
+  color: grey;
+}
+
+.footer-contain {
+  background-color: #000;
+  color: whitesmoke;
+  width: 100%;
+  display: flex;
+  gap: 50px;
+}
+
+/* FOOTER */
+
+
+.belowHeader {
+  align-items: center;
+  background-color: #696969;
+}
+
+.iconsHeader {
+  color: white;
+  display: flex;
+  position: absolute;
+  right: 35px;
+  gap: 35px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.searchbar-bg {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 50px;
+  position: sticky;
+  top: 0;
+}
+
+.imagesHeader {
+  max-width: 20%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  left: 15px;
+  cursor: pointer;
+} 
+
+.iconbrutaltype {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 75px;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav a {
+  color: black;
+  display: block;
+  padding: 20px;
+  text-decoration: none;
+}
+
+/* CSS INDEX */
+
+p.limit {
+  overflow: hidden;
+  /* remove o estouro do elemento */
+  text-overflow: ellipsis;
+  /* adiciona “...” no final */
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  /* quantidade de linhas */
+  -webkit-box-orient: vertical;
+  /* conteúdo será apresentado verticalmente */
+}
+
+.brutaltypeImg {
+  width: 50px;
+  height: 50px;
+  display: flex;
+}
+
+.searchbar {
+  width: 35%;
+}
+
+.acntbtn {
+  width: 70px;
+}
+
+.navegação {
+  -moz-box-shadow: 0 3px 10px 0 #CCC;
+  -webkit-box-shadow: 0 3px 10px 0 #ccc;
+  text-shadow: 0px 0px 5px #fff;
+  color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+}
+
+main {
+  background-color: whitesmoke;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+}
+
+.carouselConfig img {
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  width: 100%;
+  height: 100%;
+}
+
+footer {
+  background-color: black;
+  text-align: center;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  margin-top: 100px;
+}
+
+.logoBT {
+  display: flex;
+  height: auto;
+  width: 150px;
+}
+
+h1 {
+  color: black;
+  align-content: center;
+}
+
+.color-titulo {
+  color: #000;
+}
