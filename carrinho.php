@@ -11,9 +11,10 @@ if (!isset($_SESSION['carrinho'])) {
 
 if (isset($_GET['action'])) {
     $acao = $_GET['action'];
-    $id_prod = (int) $_GET['produto'];
 
     if ($acao == "add") {
+        $id_prod = (int) $_GET['produto'];
+
         if (isset($_SESSION['carrinho'][$id_prod])) {
             echo '<script>alert("PRODUTO JÁ ESTAVA ADICIONADO");</script>';
             $_SESSION['carrinho'][$id_prod]++;
@@ -23,13 +24,24 @@ if (isset($_GET['action'])) {
         }
     }
 
-    if ($acao == "delete"){
-        if(isset($_SESSION['carrinho'][$id_prod])){
+    if ($acao == "delete") {
+        $id_prod = (int) $_GET['produto'];
+        if (isset($_SESSION['carrinho'][$id_prod])) {
             unset($_SESSION['carrinho'][$id_prod]);
         }
     }
 
-    if ($acao == "update"){
+    if ($acao == "update") {
+        if (is_array($_POST['produto'])) {
+            foreach ($_POST['produto'] as $id_produto => $value) {
+                if (!empty($value) || $value <> 0) {
+                    $_SESSION['carrinho'][$id_produto] = $value;
+                } else {
+                    unset($_SESSION['carrinho'][$id_produto]);
+                }
+            }
+
+        }
 
     }
 }
@@ -250,19 +262,20 @@ if (isset($_GET['action'])) {
         <section>
             <div class="intro">
                 <h2 class="col-md-8">PRODUTOS ADICIONADOS</h2>
-                <button class="btn btn-outline-danger" id="removeAll" name="removeAll" type="submit">LIMPAR CARRINHO</button>
+                <button class="btn btn-outline-danger" id="removeAll" name="removeAll" type="submit">LIMPAR
+                    CARRINHO</button>
             </div>
             <hr>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Produto</th>
-                            <th>Nome</th>
-                            <th>Quantidade</th>
-                            <th>Preço Unitário</th>
-                            <th>Total Produto</th>
-                            <th>Remover Produto</th>
+                            <th class="text-center">Produto</th>
+                            <th class="text-center">Nome</th>
+                            <th class="text-center">Quantidade</th>
+                            <th class="text-center">Preço Unitário</th>
+                            <th class="text-center">Total Produto</th>
+                            <th class="text-center">Remover Produto</th>
                         </tr>
                     </thead>
 
@@ -283,20 +296,25 @@ if (isset($_GET['action'])) {
                                         $nome_prod = $row_produto['NOME_PROD'];
                                         $preco_prod = (int) number_format($row_produto['VALOR_COMP_PROD'], 2, ',', '.');
                                         $total_prod = (int) number_format(($row_produto['VALOR_COMP_PROD'] * $value), 2, ',', '.');
-                                        $valor_total += (int) $total_prod;
+                                        $valor_total += (int) number_format($total_prod, 2, ',', '.');
                                     }
 
                                     echo '<tr>
-                                            <td>imagem vai aqui</td>
-                                            <td>' . $nome_prod . '</td>
-                                            <td><input type="text" name="produto[' . $key . ']" value=' . $value . ' /></td>
-                                            <td>R$' . number_format($preco_prod, 2,',','.') . '</td>
-                                            <td>R$' . number_format($total_prod, 2,',','.') . '</td>
-                                            <td><a href="?action=delete&produto=' . $key . '"><i id="remove_produto" class="material-icons">delete</i></a></td>
-                                        </tr>';
+                                                <td class="text-center">imagem vai aqui</td>
+                                                <td class="text-center">' . $nome_prod . '</td>
+                                                <td class="text-center tabela-produtos">
+                                                    <div class="input-group">
+                                                    <button class="input-group-text decrementa_item" >-</button>
+                                                    <input type="text" class="form-control text-center" id="qtd_select_prod" name="produto[' . $key . ']" value=' . $value . ' />
+                                                    <button class="input-group-text incrementa_item" >+</button>
+                                                    </div>
+                                                </td>
+                                                <td class="text-center">R$' . number_format($preco_prod, 2, ',', '.') . '</td>
+                                                <td class="text-center">R$' . number_format($total_prod, 2, ',', '.') . '</td>
+                                                <td class="text-center"><a href="?action=delete&produto=' . $key . '"><i id="remove_produto" class="material-icons">delete</i></a></td>
+                                            </tr>';
                                 }
                             }
-
                             ?>
                         </tbody>
                     </form>
@@ -316,7 +334,9 @@ if (isset($_GET['action'])) {
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">Frete:</li>
                         <li class="list-group-item">Total à prazo:</li>
-                        <li class="list-group-item">Valor à vista: <?php echo 'R$'. number_format($valor_total, 2, ',','.');?></li>
+                        <li class="list-group-item">Valor à vista:
+                            <?php echo 'R$' . number_format($valor_total, 2, ',', '.'); ?>
+                        </li>
                     </ul>
                     <div class="card-body">
                         <a href="#" class="card-link">IR AO PAGAMENTO</a>
@@ -350,6 +370,36 @@ if (isset($_GET['action'])) {
     btnRemove.addEventListener('click', () => {
         window.location.href = 'destroy_session.php';
     })
+
+    $('.incrementa_item').click(function (e) {
+        var qtd_produto = $(this).closest('.tabela-produtos').find('#qtd_select_prod').val();
+
+        qtd_produto = parseInt(qtd_produto);
+        if (isNaN(qtd_produto)) {
+            qtd_produto = 0;
+        }
+        else {
+            qtd_produto++;
+        }
+
+        $(this).closest('.tabela-produtos').find('#qtd_select_prod').val(qtd_produto);
+
+    });
+
+    $('.decrementa_item').click(function (e) {
+        var qtd_produto = $(this).closest('.tabela-produtos').find('#qtd_select_prod').val();
+
+        qtd_produto = parseInt(qtd_produto);
+        if (isNaN(qtd_produto)) {
+            qtd_produto = 0;
+        }
+        else {
+            qtd_produto--;
+        }
+
+        $(this).closest('.tabela-produtos').find('#qtd_select_prod').val(qtd_produto);
+
+    });
 
 </script>
 
