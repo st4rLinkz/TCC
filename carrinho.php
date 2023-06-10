@@ -7,42 +7,47 @@ if (!isset($_SESSION['carrinho'])) {
 ?>
 
 <?php
-//Verifica sessão existente ou cria uma nova sessão
+//Verifica sessão existente e ações a serem realizadas
 
 if (isset($_GET['action'])) {
     $acao = $_GET['action'];
 
     if ($acao == "add") {
-        $id_prod = (int) $_GET['produto'];
 
-        if (isset($_SESSION['carrinho'][$id_prod])) {
-            echo '<script>alert("PRODUTO JÁ ESTAVA ADICIONADO");</script>';
-            $_SESSION['carrinho'][$id_prod]++;
-        } else {
-            echo '<script>alert("SEU PRODUTO FOI ADICIONADO AO CARRINHO!");</script>';
-            $_SESSION['carrinho'][$id_prod] = 1;
+        if (isset($_GET['produto'])) {
+
+            $id_prod = (int) $_GET['produto'];
+
+            if (isset($_SESSION['carrinho'][$id_prod])) {
+                $_SESSION['carrinho'][$id_prod]++;
+            } else {
+                $_SESSION['carrinho'][$id_prod] = 1;
+            }
         }
     }
 
     if ($acao == "delete") {
-        $id_prod = (int) $_GET['produto'];
-        if (isset($_SESSION['carrinho'][$id_prod])) {
-            unset($_SESSION['carrinho'][$id_prod]);
+        if (isset($_GET['produto'])) {
+            $id_prod = (int) $_GET['produto'];
+            if (isset($_SESSION['carrinho'][$id_prod])) {
+                unset($_SESSION['carrinho'][$id_prod]);
+            }
+            
         }
     }
 
     if ($acao == "update") {
-        if (is_array($_POST['produto'])) {
-            foreach ($_POST['produto'] as $id_produto => $value) {
-                if (!empty($value) || $value <> 0) {
-                    $_SESSION['carrinho'][$id_produto] = $value;
-                } else {
-                    unset($_SESSION['carrinho'][$id_produto]);
+        if (isset($_POST['produto']))
+            if (is_array($_POST['produto'])) {
+                foreach ($_POST['produto'] as $id_produto => $value) {
+                    if (!empty($value) || $value <> 0) {
+                        $_SESSION['carrinho'][$id_produto] = $value;
+                    } else {
+                        unset($_SESSION['carrinho'][$id_produto]);
+                    }
                 }
+
             }
-
-        }
-
     }
 }
 
@@ -91,10 +96,11 @@ if (isset($_GET['action'])) {
         width: 100%;
     }
 
-    section img {
-        max-width: 100%;
+    td img {
+        max-width: 75%;
         margin: 5px;
         padding: 5px;
+        border-radius: 10px;
     }
 
     div.intro {
@@ -110,6 +116,25 @@ if (isset($_GET['action'])) {
         flex-direction: row;
     }
 
+    .decrement_btn {
+        background-color: whitesmoke;
+        color: black;
+    }
+
+    .decrement_btn:hover {
+        background-color: grey;
+        color: white;
+    }
+
+    .increment_btn {
+        background-color: whitesmoke;
+        color: black;
+    }
+
+    .increment_btn:hover {
+        background-color: grey;
+        color: white;
+    }
 
     h2 {
         font-weight: bold;
@@ -143,21 +168,7 @@ if (isset($_GET['action'])) {
         text-transform: capitalize;
     }
 
-    div.arrows {
-        display: flex;
-        flex-direction: row;
-        gap: 5px
-    }
-
     div.resumo {
-        /*    background-color: white;
-        display: grid;
-        flex-direction: column;
-        border-radius: 10px;
-        width: 20%;
-        align-items: center;
-        grid-auto-flow: ;
-        margin-right: 5px; */
         margin: 10px;
         padding: 10px;
     }
@@ -185,19 +196,17 @@ if (isset($_GET['action'])) {
         /* conteúdo será apresentado verticalmente */
     }
 
-    /* estilização das "flechas" de soma e subtração de quantidade */
-    a {
+    /*  a {
         text-decoration: none;
-        display: inline-block;
         padding: 8px 16px;
     }
 
     a:hover {
         background-color: #ddd;
         color: black;
-    }
+    } */
 
-    .previous {
+    /* .previous {
         background-color: grey;
         color: white;
     }
@@ -205,11 +214,11 @@ if (isset($_GET['action'])) {
     .next {
         background-color: grey;
         color: white;
-    }
+    } 
 
     .round {
         border-radius: 50%;
-    }
+    }*/
 
     .material-icons#remove_produto {
         color: red;
@@ -270,21 +279,21 @@ if (isset($_GET['action'])) {
                 <table class="table">
                     <thead>
                         <tr>
-                            <th class="text-center">Produto</th>
-                            <th class="text-center">Nome</th>
-                            <th class="text-center">Quantidade</th>
-                            <th class="text-center">Preço Unitário</th>
-                            <th class="text-center">Total Produto</th>
-                            <th class="text-center">Remover Produto</th>
+                            <th class="text-center col-md-2">Produto</th>
+                            <th class="text-center col-md-2">Nome</th>
+                            <th class="text-center col-md-2">Quantidade</th>
+                            <th class="text-center col-md-2">Preço Unitário</th>
+                            <th class="text-center col-md-2">Total Produto</th>
+                            <th class="text-center col-md-2">Remover</th>
                         </tr>
                     </thead>
 
 
-                    <form action="?action=update" method="post">
+                    <form id="formProduto" action="?action=update" method="POST">
                         <tbody>
                             <?php
                             if (count($_SESSION['carrinho']) == 0) {
-                                echo "<tr><td>Não há produtos adicionados</td></tr>";
+                                echo "<tr><td colspan='6'>Não há produtos adicionados</td></tr>";
                             } else {
                                 foreach ($_SESSION['carrinho'] as $key => $value) {
                                     $select_produtos = "SELECT * FROM tb_produto WHERE ID_PROD = '$key'";
@@ -300,18 +309,26 @@ if (isset($_GET['action'])) {
                                     }
 
                                     echo '<tr>
-                                                <td class="text-center">imagem vai aqui</td>
-                                                <td class="text-center">' . $nome_prod . '</td>
-                                                <td class="text-center tabela-produtos">
+                                                <td class="text-center align-middle"><img src="./images/produto.jpg"></img></td>
+                                                <td class="text-center align-middle">' . $nome_prod . '</td>
+                                                <td class="text-center tabela-produtos align-middle">
                                                     <div class="input-group">
-                                                    <button class="input-group-text decrementa_item" >-</button>
+                                                    <button type="button" class="input-group-text decrementa_item decrement_btn" >-</button>
                                                     <input type="text" class="form-control text-center" id="qtd_select_prod" name="produto[' . $key . ']" value=' . $value . ' />
-                                                    <button class="input-group-text incrementa_item" >+</button>
+                                                    <button type="button" class="input-group-text incrementa_item increment_btn">+</button>
                                                     </div>
                                                 </td>
-                                                <td class="text-center">R$' . number_format($preco_prod, 2, ',', '.') . '</td>
-                                                <td class="text-center">R$' . number_format($total_prod, 2, ',', '.') . '</td>
-                                                <td class="text-center"><a href="?action=delete&produto=' . $key . '"><i id="remove_produto" class="material-icons">delete</i></a></td>
+                                                <td class="text-center align-middle">
+                                                    <span class="input-group-addon">R$</span>' . number_format($preco_prod, 2, ',', '.') . '
+                                                </td>
+                                                <td class="text-center align-middle">
+                                                    <span class="input-group-addon">R$</span>' . number_format($total_prod, 2, ',', '.') . '
+                                                </td>
+                                                <td class="text-center align-middle">
+                                                    <a href="?action=delete&produto=' . $key . '">
+                                                        <i id="remove_produto" class="material-icons">delete</i>
+                                                    </a>
+                                                </td>
                                             </tr>';
                                 }
                             }
@@ -332,6 +349,9 @@ if (isset($_GET['action'])) {
                         <p class="card-text">Valor dos produtos:</p>
                     </div>
                     <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Qtd. Produtos:
+                            <?php echo count($_SESSION['carrinho']) ?>
+                        </li>
                         <li class="list-group-item">Frete:</li>
                         <li class="list-group-item">Total à prazo:</li>
                         <li class="list-group-item">Valor à vista:
@@ -340,15 +360,12 @@ if (isset($_GET['action'])) {
                     </ul>
                     <div class="card-body">
                         <a href="#" class="card-link">IR AO PAGAMENTO</a>
-                        <a href="#" class="card-link">CONTINUAR COMPRANDO</a>
+                        <a href="index.php" class="card-link">CONTINUAR COMPRANDO</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-
-
 </body>
 
 <script>
@@ -372,7 +389,10 @@ if (isset($_GET['action'])) {
     })
 
     $('.incrementa_item').click(function (e) {
+        e.preventDefault();
+
         var qtd_produto = $(this).closest('.tabela-produtos').find('#qtd_select_prod').val();
+        var id_produto = $(this).closest('.tabela-produtos').find('#qtd_select_prod').attr('name');
 
         qtd_produto = parseInt(qtd_produto);
         if (isNaN(qtd_produto)) {
@@ -384,10 +404,19 @@ if (isset($_GET['action'])) {
 
         $(this).closest('.tabela-produtos').find('#qtd_select_prod').val(qtd_produto);
 
+        $.post('carrinho.php', {
+            produto: id_produto, value: qtd_produto
+        }, function () {
+            $("#formProduto").submit();
+        });
+
     });
 
     $('.decrementa_item').click(function (e) {
+        e.preventDefault();
+
         var qtd_produto = $(this).closest('.tabela-produtos').find('#qtd_select_prod').val();
+        var id_produto = $(this).closest('.tabela-produtos').find('#qtd_select_prod').attr('name');
 
         qtd_produto = parseInt(qtd_produto);
         if (isNaN(qtd_produto)) {
@@ -399,7 +428,15 @@ if (isset($_GET['action'])) {
 
         $(this).closest('.tabela-produtos').find('#qtd_select_prod').val(qtd_produto);
 
+        $.post('carrinho.php', {
+            produto: id_produto, value: qtd_produto
+        }, function () {
+            $("#formProduto").submit();
+        });
+
     });
+
+
 
 </script>
 
