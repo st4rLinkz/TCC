@@ -1,13 +1,20 @@
 <?php include_once "conexao.php";
 session_start();
 
-$id_prod = (int) $_GET['adicionar'];
-$select_produtos = "SELECT * FROM tb_produto WHERE ID_PROD = '$id_prod'";
-$resultado_produtos = $conn->prepare($select_produtos);
-$resultado_produtos->execute();
-$row_produto = $resultado_produtos->fetch(PDO::FETCH_ASSOC);
-$qtd_disponivel = 0;
+$row_produto = 0;
 $qtd_select = 0;
+$qtd_disponivel = 0;
+$qtd_select = 1;
+
+if (isset($_GET['adicionar'])) {
+    $id_prod = (int) $_GET['adicionar'];
+    $select_produtos = "SELECT * FROM tb_produto WHERE ID_PROD = '$id_prod'";
+    $resultado_produtos = $conn->prepare($select_produtos);
+    $resultado_produtos->execute();
+    $row_produto = $resultado_produtos->fetch(PDO::FETCH_ASSOC);
+}
+
+
 ?>
 
 <!-- Verifica sessão existente ou cria uma nova sessão -->
@@ -25,7 +32,8 @@ if ($row_produto > 0) {
             'quantidade' => 1,
             'nome' => $row_produto['NOME_PROD'],
             'preco' => $row_produto['VALOR_COMP_PROD'],
-            'desc' => $row_produto['DESC_PROD']
+            'desc' => $row_produto['DESC_PROD'],
+            'id' => $row_produto['ID_PROD']
         );
     }
 }
@@ -52,6 +60,7 @@ if ($row_produto > 0) {
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <title>Carrinho</title>
 </head>
 
@@ -260,14 +269,10 @@ if ($row_produto > 0) {
                         <p>QUANTIDADE</p>
                         <?php
                         echo $value['quantidade'];
-                        /* echo '<a href="#" class="previous round">&#8249;</a>';
-                        echo '<a href="#" class="next round">&#8250;</a>' */
                         ?>
                         <div class="arrows">
-                            <?php
-                            echo '<a href="#" class="previous round">&#8249;</a>';
-                            echo '<a href="#" class="next round">&#8250;</a>'
-                            ?>
+                            <a href="#" id="decrementa_item" class="previous round">-</a>
+                            <a href="#" id="incrementa_item" class="next round" onclick="incrementaItem(<?php echo $value['id']; ?>)">+</a>
                         </div>
                     </div>
                     <div class="col-md-2 precoprod" id="preco_produto">
@@ -324,11 +329,13 @@ if ($row_produto > 0) {
 
     );
 
-    const localMall = document.getElementById('localMallIcon');
-    localMall.addEventListener('click', () => {
-        window.location.href = "carrinho.php?adicionar=<?php echo $_GET['adicionar']?>  ";
-    });
-
+    function incrementaItem(id_produto){
+        alert(id_produto);
+        $.ajax({
+            url: 'carrinho.php?adicionar='+id_produto,
+            type: 'GET'
+        });
+    }
 
 </script>
 

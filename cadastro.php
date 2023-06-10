@@ -4,13 +4,6 @@
   include_once('conexao.php');
 
 
-  if (isset($_SESSION['msg'])) {
-    // Imprimir o valor da variável global "msg"
-    echo $_SESSION['msg'];
-
-    // Destruir a variável globar "msg"
-    unset($_SESSION['msg']);
-}
 
 
 ?>
@@ -18,7 +11,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="./db_brutaltype.sql">
     <title>Cadastro</title>
 
     <!-- Font Icon -->
@@ -69,7 +61,7 @@
 
 
                         <div class="form-group form-input">
-                            <input type="date" name="datans" id="datans" name="datans"  value=""  placeholder=" "
+                            <input type="date" name="datans" id="datans"  value="" 
                             required />
                             <label for="datans" class="form-label"> Data de nascimento</label>
                         </div>
@@ -100,7 +92,7 @@
     <script src="js/main.js"></script>
 
     
-    
+
 
     
 </body>

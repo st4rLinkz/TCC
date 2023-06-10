@@ -13,6 +13,8 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js"
         integrity="sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ"
         crossorigin="anonymous"></script>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <title>Produtos</title>
 </head>
 
@@ -52,15 +54,9 @@
                         </div>
 
                         <div>
-                            <input type="number" name="precoprod" id="precoprod" min="0.00" max="10000.00"/>
+                            <input type="number" name="precoprod" id="precoprod" />
                             <label for="precoprod" class="form-label">Preço Produto</label>
                         </div>
-
-
-
-
-
-
 
                         <div class="form-submit">
                             <input type="submit" value="cadastrar" class="submit" name="SendCadprod" id="SendCadprod" />

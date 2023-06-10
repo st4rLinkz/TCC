@@ -204,7 +204,7 @@ $resultado_produtos->execute()
 
     const localMall = document.getElementById('localMallIcon');
     localMall.addEventListener('click', () => {
-            window.location.href = "carrinho.php?adicionar=<?php echo $_SESSION['carrinho'] ?>";
+            window.location.href = "carrinho.php";
         }   
     );
 </script>
