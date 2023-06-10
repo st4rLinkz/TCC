@@ -143,7 +143,7 @@ $resultado_produtos->execute()
                                 </a>
                                 <p class="card-text limit"><?php echo $row_produto['DESC_PROD']; ?></p>
                                 <p>R$<?php echo $row_produto['VALOR_COMP_PROD']; ?></p>
-                                <a href="./carrinho.php?adicionar=<?php echo $row_produto['ID_PROD'] ?>" class="card-title">
+                                <a href="./carrinho.php?action=add&produto=<?php echo $row_produto['ID_PROD'] ?>" class="card-title">
                                 COMPRAR </a>
                             </div>
                         </div>

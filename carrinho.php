@@ -1,42 +1,39 @@
 <?php include_once "conexao.php";
 session_start();
-
-$row_produto = 0;
-$qtd_select = 0;
-$qtd_disponivel = 0;
-$qtd_select = 1;
-
-if (isset($_GET['adicionar'])) {
-    $id_prod = (int) $_GET['adicionar'];
-    $select_produtos = "SELECT * FROM tb_produto WHERE ID_PROD = '$id_prod'";
-    $resultado_produtos = $conn->prepare($select_produtos);
-    $resultado_produtos->execute();
-    $row_produto = $resultado_produtos->fetch(PDO::FETCH_ASSOC);
+$valor_total = 0;
+if (!isset($_SESSION['carrinho'])) {
+    $_SESSION['carrinho'] = array();
 }
-
-
 ?>
 
-<!-- Verifica sessão existente ou cria uma nova sessão -->
 <?php
-if ($row_produto > 0) {
-    if (isset($_SESSION['carrinho'][$id_prod])) {
-        echo '<script>alert("PRODUTO JÁ ESTAVA ADICIONADO");</script>';
-        $qtd_disponivel = $row_produto['QTD_PROD'];
+//Verifica sessão existente ou cria uma nova sessão
 
-        $_SESSION['carrinho'][$id_prod]['quantidade']++;
-        $qtd_select = $_SESSION['carrinho'][$id_prod]['quantidade'];
-    } else {
-        echo '<script>alert("SEU PRODUTO FOI ADICIONADO AO CARRINHO!");</script>';
-        $_SESSION['carrinho'][$id_prod] = array(
-            'quantidade' => 1,
-            'nome' => $row_produto['NOME_PROD'],
-            'preco' => $row_produto['VALOR_COMP_PROD'],
-            'desc' => $row_produto['DESC_PROD'],
-            'id' => $row_produto['ID_PROD']
-        );
+if (isset($_GET['action'])) {
+    $acao = $_GET['action'];
+    $id_prod = (int) $_GET['produto'];
+
+    if ($acao == "add") {
+        if (isset($_SESSION['carrinho'][$id_prod])) {
+            echo '<script>alert("PRODUTO JÁ ESTAVA ADICIONADO");</script>';
+            $_SESSION['carrinho'][$id_prod]++;
+        } else {
+            echo '<script>alert("SEU PRODUTO FOI ADICIONADO AO CARRINHO!");</script>';
+            $_SESSION['carrinho'][$id_prod] = 1;
+        }
+    }
+
+    if ($acao == "delete"){
+        if(isset($_SESSION['carrinho'][$id_prod])){
+            unset($_SESSION['carrinho'][$id_prod]);
+        }
+    }
+
+    if ($acao == "update"){
+
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -58,8 +55,11 @@ if ($row_produto > 0) {
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+        crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
     <title>Carrinho</title>
 </head>
@@ -199,6 +199,10 @@ if ($row_produto > 0) {
         border-radius: 50%;
     }
 
+    .material-icons#remove_produto {
+        color: red;
+    }
+
     /* estilização das "flechas" de soma e subtração de quantidade */
 </style>
 
@@ -215,17 +219,23 @@ if ($row_produto > 0) {
                     </div>
                     <div class="searchbar">
                         <form class="d-flex w-100 p-3" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Faça sua busca..." aria-label="Search">
+                            <input class="form-control me-2" type="search" placeholder="Faça sua busca..."
+                                aria-label="Search">
                             <div class="btnSearchNav"><button class="btn btn-danger" type="submit">Buscar</button>
                             </div>
                             <div class="iconsHeader">
 
-                                <div class="personIcon" id="personIcon"><svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-                                        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
+                                <div class="personIcon" id="personIcon"><svg xmlns="http://www.w3.org/2000/svg"
+                                        width="30" height="30" fill="currentColor" class="bi bi-person"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z" />
                                     </svg> Login</div>
 
-                                <div class="" id="localMallIcon"><svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-bag" viewBox="0 0 16 16">
-                                        <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" />
+                                <div class="" id="localMallIcon"><svg xmlns="http://www.w3.org/2000/svg" width="25"
+                                        height="25" fill="currentColor" class="bi bi-bag" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" />
                                     </svg>
                                 </div>
                             </div>
@@ -236,55 +246,62 @@ if ($row_produto > 0) {
     </nav>
     </header>
     </div>
-
     <div class="col-md-12 d-flex">
-
-        <section class="">
+        <section>
             <div class="intro">
                 <h2 class="col-md-8">PRODUTOS ADICIONADOS</h2>
-                <button class="btn btn-outline-danger" id="removeAll" name="removeAll" type="submit" onclick="limpar('clear')">LIMPAR CARRINHO</button>
+                <button class="btn btn-outline-danger" id="removeAll" name="removeAll" type="submit">LIMPAR CARRINHO</button>
             </div>
             <hr>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Nome</th>
+                            <th>Quantidade</th>
+                            <th>Preço Unitário</th>
+                            <th>Total Produto</th>
+                            <th>Remover Produto</th>
+                        </tr>
+                    </thead>
 
-            <div class="container produtos">
-                <?php foreach ($_SESSION['carrinho'] as $key => $value) { ?>
-                    <p>
-                    <div class="col-md-2">
-                        <img src="./images/produto.jpg" alt="">
-                    </div>
-                    </p>
-                    <div class="col-md-2 nomeprod" id="nome_produto">
-                        <p>NOME</p>
-                        <?php
-                        echo $value['nome'];
-                        ?>
-                    </div>
-                    <div class="col-md-2 descprod" id="desc_produto">
-                        <p>DESCRIÇÃO</p>
-                        <?php
-                        echo $value['desc'];
-                        ?>
-                    </div>
-                    <div class="col-md-4 qtdprod" id="qtd_produto">
-                        <p>QUANTIDADE</p>
-                        <?php
-                        echo $value['quantidade'];
-                        ?>
-                        <div class="arrows">
-                            <a href="#" id="decrementa_item" class="previous round">-</a>
-                            <a href="#" id="incrementa_item" class="next round" onclick="incrementaItem(<?php echo $value['id']; ?>)">+</a>
-                        </div>
-                    </div>
-                    <div class="col-md-2 precoprod" id="preco_produto">
-                        <p>PREÇO</p>
-                        <?php
-                        $preco_prod = $value['preco'];
-                        $preco_final = ($qtd_select * $preco_prod);
 
-                        echo $preco_final;
-                        ?>
-                    </div>
-                <?php } ?>
+                    <form action="?action=update" method="post">
+                        <tbody>
+                            <?php
+                            if (count($_SESSION['carrinho']) == 0) {
+                                echo "<tr><td>Não há produtos adicionados</td></tr>";
+                            } else {
+                                foreach ($_SESSION['carrinho'] as $key => $value) {
+                                    $select_produtos = "SELECT * FROM tb_produto WHERE ID_PROD = '$key'";
+                                    $resultado_produtos = $conn->prepare($select_produtos);
+                                    $resultado_produtos->execute();
+                                    $row_produto = $resultado_produtos->fetch(PDO::FETCH_ASSOC);
+
+                                    if ($row_produto > 0) {
+                                        $nome_prod = $row_produto['NOME_PROD'];
+                                        $preco_prod = (int) number_format($row_produto['VALOR_COMP_PROD'], 2, ',', '.');
+                                        $total_prod = (int) number_format(($row_produto['VALOR_COMP_PROD'] * $value), 2, ',', '.');
+                                        $valor_total += (int) $total_prod;
+                                    }
+
+                                    echo '<tr>
+                                            <td>imagem vai aqui</td>
+                                            <td>' . $nome_prod . '</td>
+                                            <td><input type="text" name="produto[' . $key . ']" value=' . $value . ' /></td>
+                                            <td>R$' . number_format($preco_prod, 2,',','.') . '</td>
+                                            <td>R$' . number_format($total_prod, 2,',','.') . '</td>
+                                            <td><a href="?action=delete&produto=' . $key . '"><i id="remove_produto" class="material-icons">delete</i></a></td>
+                                        </tr>';
+                                }
+                            }
+
+                            ?>
+                        </tbody>
+                    </form>
+                </table>
+            </div>
         </section>
 
         <div class="resumo">
@@ -299,7 +316,7 @@ if ($row_produto > 0) {
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">Frete:</li>
                         <li class="list-group-item">Total à prazo:</li>
-                        <li class="list-group-item">Valor à vista:</li>
+                        <li class="list-group-item">Valor à vista: <?php echo 'R$'. number_format($valor_total, 2, ',','.');?></li>
                     </ul>
                     <div class="card-body">
                         <a href="#" class="card-link">IR AO PAGAMENTO</a>
@@ -317,25 +334,22 @@ if ($row_produto > 0) {
 <script>
     const imagem = document.getElementById('imagesHeader');
     imagem.addEventListener('click', () => {
-            window.location.href = "index.php";
-        }
+        window.location.href = "index.php";
+    }
 
     );
 
     const person = document.getElementById('personIcon');
     person.addEventListener('click', () => {
-            window.location.href = "cadastro.php";
-        }
+        window.location.href = "cadastro.php";
+    }
 
     );
 
-    function incrementaItem(id_produto){
-        alert(id_produto);
-        $.ajax({
-            url: 'carrinho.php?adicionar='+id_produto,
-            type: 'GET'
-        });
-    }
+    const btnRemove = document.getElementById("removeAll");
+    btnRemove.addEventListener('click', () => {
+        window.location.href = 'destroy_session.php';
+    })
 
 </script>
 
