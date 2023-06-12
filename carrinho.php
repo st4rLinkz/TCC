@@ -313,16 +313,26 @@ if (isset($_GET['action'])) {
                                                 <td class="text-center align-middle">' . $nome_prod . '</td>
                                                 <td class="text-center tabela-produtos align-middle">
                                                     <div class="input-group">
-                                                    <button type="button" class="input-group-text decrementa_item decrement_btn" >-</button>
-                                                    <input type="text" class="form-control text-center" id="qtd_select_prod" name="produto[' . $key . ']" value=' . $value . ' />
-                                                    <button type="button" class="input-group-text incrementa_item increment_btn">+</button>
+                                                        <button type="button" class="input-group-text decrementa_item decrement_btn" >-</button>
+                                                        <input type="text" class="form-control text-center" id="qtd_select_prod" name="produto[' . $key . ']" value=' . $value . ' />
+                                                        <button type="button" class="input-group-text incrementa_item increment_btn">+</button>
                                                     </div>
                                                 </td>
                                                 <td class="text-center align-middle">
-                                                    <span class="input-group-addon">R$</span>' . number_format($preco_prod, 2, ',', '.') . '
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">R$</span>
+                                                        </div>
+                                                            <input class="form-control" disabled value=' . number_format($preco_prod, 2, ',', '.') . '>
+                                                    </div
                                                 </td>
                                                 <td class="text-center align-middle">
-                                                    <span class="input-group-addon">R$</span>' . number_format($total_prod, 2, ',', '.') . '
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text">R$</span>
+                                                        </div>
+                                                            <input class="form-control" disabled value=' . number_format($total_prod, 2, ',', '.') . '>
+                                                    </div
                                                 </td>
                                                 <td class="text-center align-middle">
                                                     <a href="?action=delete&produto=' . $key . '">
